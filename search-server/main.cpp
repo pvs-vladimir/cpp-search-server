@@ -61,8 +61,10 @@ public:
         const vector<string> words = SplitIntoWordsNoStop(document);
         double words_size = static_cast<double>(words.size());
         for (const string& word : words) {
-            documents_[word][document_id] = static_cast<double>(count(words.begin(), words.end(), word)) 
-                / words_size;
+            if (documents_[word].count(document_id) == 0) {
+                documents_[word][document_id] = static_cast<double>(count(words.begin(), words.end(), word)) 
+                    / words_size;
+            }
         }
         ++document_count_;
     }
@@ -119,13 +121,16 @@ private:
         return query;
     }
 
+    double CalculateIdf(const string& word) const {
+        return log(static_cast<double>(document_count_) / static_cast<double>(documents_.at(word).size()));
+    }
+
     vector<Document> FindAllDocuments(const Query& query) const {
         vector<Document> matched_documents;
         map<int, double> documents_relevance;
         for (const string& word : query.words) {
             if (documents_.count(word) != 0) {
-                double idf = log(static_cast<double>(document_count_) / 
-                                 static_cast<double>(documents_.at(word).size()));
+                double idf = CalculateIdf(word);
                 for (const auto& [document_id, tf] : documents_.at(word)) {
                     documents_relevance[document_id] += idf * tf;
                 }
