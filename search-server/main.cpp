@@ -59,9 +59,9 @@ public:
 
     void AddDocument(int document_id, const string& document) {
         const vector<string> words = SplitIntoWordsNoStop(document);
-        double words_size = static_cast<double>(words.size());
+        double word_tf = 1.0 / static_cast<double>(words.size());
         for (const string& word : words) {
-            documents_[word][document_id] += 1.0 / words_size;
+            documents_[word][document_id] += word_tf;
         }
         ++document_count_;
     }
