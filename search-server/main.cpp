@@ -61,10 +61,7 @@ public:
         const vector<string> words = SplitIntoWordsNoStop(document);
         double words_size = static_cast<double>(words.size());
         for (const string& word : words) {
-            if (documents_[word].count(document_id) == 0) {
-                documents_[word][document_id] = static_cast<double>(count(words.begin(), words.end(), word)) 
-                    / words_size;
-            }
+            documents_[word][document_id] += 1.0 / words_size;
         }
         ++document_count_;
     }
